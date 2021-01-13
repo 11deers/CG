@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=utf-8">
+    <title>Chap7 Demo 5 Cube with Reflection Map</title>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+		varying vec3 R;
+
+		attribute vec4 vPosition;
+		attribute vec4 vNormal;
+
+		uniform mat4 modelViewMatrix;
+		uniform mat4 projectionMatrix;
+		uniform mat3 normalMatrix;
+
+		void main()
+		{
+			gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+
+			vec3 eyePos = ( modelViewMatrix * vPosition ).xyz;
+
+			vec3 N = normalize( normalMatrix * vNormal.xyz );
+
+			R = reflect( eyePos, N );
+		}
+	</script>
+
+	<script id="fragment-shader" type="x-shader/x-fragment">
+		precision mediump float;
+
+		varying vec3 R;
+		uniform samplerCube texMap;
+
+		void main()
+		{
+			vec4 texColor = textureCube( texMap, R );
+			gl_FragColor = texColor;
+		}
+	</script>
+
+    <script type="text/javascript" src="js/common/webgl-utils.js"></script>
+    <script type="text/javascript" src="js/common/initShaders.js"></script>
+    <script type="text/javascript" src="js/common/gl-matrix-min.js"></script>
+
+    <script type="text/javascript" src="js/reflectionMapSphere.js"></script>
+</head>
+
+<body>
+    <h1 style="color: hotpink;">给球体添加纹理</h1>
+    <canvas id="gl-canvas" width="600" height="600" style="float: left;">
+        你的浏览器不支持HTML5 canvas元素
+    </canvas>
+	<fieldset style="width: 370px;height:100px;border-color: pink;  margin-top: 150px;">
+	<h3 style="color: deeppink">选择旋转方式:</h3>
+    <button id="ButtonX">绕X轴旋转</button>
+    <button id="ButtonY">绕Y轴旋转</button>
+    <button id="ButtonZ">绕Z轴旋转</button>
+    <button id="ButtonT">切换：运动/停止</button>
+	
+	</fieldset>
+</body>
+</html>
